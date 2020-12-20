@@ -21,13 +21,16 @@ cities = [
 ]
 
 class CitiesResource(object):
+	def __init__(self, weather_provider):
+		self.weather_provider = weather_provider
+
 	def on_get(self, req, resp):
 		resp.body = json.dumps(cities, ensure_ascii=False)
 		resp.status = falcon.HTTP_200
 
 class CityResource(object):
-	def __init__(self):
-		self.weather_provider = WeatherProvider()
+	def __init__(self, weather_provider):
+		self.weather_provider = weather_provider
 
 	def on_get(self, req, resp, id_or_name):
 		it = filter(lambda c: str(c["id"]) == id_or_name or c["name"] == id_or_name, cities)
