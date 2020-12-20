@@ -6,18 +6,43 @@ cities = [
 	{
 		'name' : 'Leipzig',
 		'id' : 1,
-		'href' : '/cities/Leipzig'
 	},
 	{
 		'name' : 'Berlin',
 		'id' : 2,
-		'href' : '/cities/Berlin'
 	},
 	{
 		'name' : 'Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch',
 		'id' : 3,
-		'href' : '/cities/Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch'
-	}
+	},
+	{
+		'name' : 'Lüchtringen',
+		'id' : 4,
+	},
+	{
+		'name' : 'Stendal',
+		'id' : 5,
+	},
+	{
+		'name' : 'Eston',
+		'id' : 6,
+	},
+	{
+		'name' : 'Klaksvik',
+		'id' : 7,
+	},
+	{
+		'name' : 'Пермь',
+		'id' : 8,
+	},
+	{
+		'name' : 'الخرج',
+		'id' : 9,
+	},
+	{
+		'name' : 'თბილისი',
+		'id' : 10,
+	},
 ]
 
 class CitiesResource(object):
@@ -25,6 +50,10 @@ class CitiesResource(object):
 		self.weather_provider = weather_provider
 
 	def on_get(self, req, resp):
+		# Update temperature for all cities and set href
+		for c in cities:
+			c["temperature"] = self.weather_provider.getTemperature(c["name"])
+			c["href"] = "/cities/" + str(c["id"])
 		resp.body = json.dumps(cities, ensure_ascii=False)
 		resp.status = falcon.HTTP_200
 
