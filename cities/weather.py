@@ -2,8 +2,9 @@
 import requests, sys, time
 
 class WeatherProvider:
-	def __init__(self):
+	def __init__(self, api_key):
 		self.cache = {}
+		self.api_key = api_key
 
 	def getTemperature(self, city_name):
 		if city_name in self.cache:
@@ -11,7 +12,7 @@ class WeatherProvider:
 				return self.cache[city_name]["temperature"]
 
 		resp = requests.get(
-			f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid=b26111d32d394b084fe4ebfbdf849d26")
+			f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={self.api_key}")
 
 		if resp.status_code == 200:
 			if not city_name in self.cache:
