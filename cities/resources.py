@@ -61,15 +61,23 @@ class CityResource(object):
 	def __init__(self, weather_provider):
 		self.weather_provider = weather_provider
 
-	def on_get(self, req, resp, id_or_name):
+	def get_city(self, id_or_name):
 		it = filter(lambda c: str(c["id"]) == id_or_name or c["name"] == id_or_name, cities)
 		try:
 			city = next(it)
 			city["temperature"] = self.weather_provider.getTemperature(city["name"])
+			city["href"] = "/cities/" + city["name"]
+			return city
+		except StopIteration:
+			return None
+
+	def on_get(self, req, resp, id_or_name):
+		city = self.get_city(id_or_name)
+		if city == None:
+			resp.status = falcon.HTTP_404
+		else:
 			resp.body = json.dumps(city, ensure_ascii=False)
 			resp.status = falcon.HTTP_200
-		except StopIteration:
-			resp.status = falcon.HTTP_404
 
 	def on_put(self, req, resp, id_or_name):
 		if any(c["id"] == id_or_name or c["name"] == id_or_name for c in cities):
@@ -79,9 +87,10 @@ class CityResource(object):
 		cities.append({
 			'name' : id_or_name,
 			'id' : int(time.time()),
-			'href' : '/cities/' + id_or_name
+			'href' : '/cities/' + id_or_name,
 		})
 		resp.status = falcon.HTTP_200
+		resp.body = json.dumps(self.get_city(id_or_name), ensure_ascii=False)
 
 	def on_delete(self, req, resp, id_or_name):
 		if not any(c["id"] == id_or_name or c["name"] == id_or_name for c in cities):
