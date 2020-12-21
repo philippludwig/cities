@@ -23,8 +23,12 @@ except:
 	sys.exit(2)
 
 weather_provider = WeatherProvider(weather_api_key)
-cors = CORS(allow_all_origins=True, allow_methods_list=["GET", "PUT"], allow_all_headers=True)
-api = application = falcon.API(middleware=[cors.middleware])
+
+if config["cors"] == True:
+	cors = CORS(allow_all_origins=True, allow_methods_list=["GET", "PUT"], allow_all_headers=True)
+	api = application = falcon.API(middleware=[cors.middleware])
+else:
+	api = application = falcon.API()
 
 api.add_route('/cities', CitiesResource(weather_provider))
 api.add_route('/cities/{id_or_name}', CityResource(weather_provider))
