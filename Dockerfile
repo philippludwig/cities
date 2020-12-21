@@ -10,4 +10,4 @@ USER cities
 RUN mkdir /home/cities/.config
 ADD cities.json /home/cities/.config/cities.json
 WORKDIR /opt
-ENTRYPOINT gunicorn3 cities.app
+ENTRYPOINT gunicorn3 --bind 0.0.0.0:8000 cities.app
